@@ -288,6 +288,17 @@ class moon_rashi_calc
     print("Equaltime  $equalTime");
     print("Equaltime  $equalNightTime");
     if(!notificationSet) {
+       Map<int, String> dayToPlanet = {
+        1: "Moon-good for everything",
+        2: "Mars-Debate/War",
+        3: "Mercury-Learning",
+        4: "Jupiter-Marriage",
+        5: "Venus-Journey",
+        6: "Saturn-Saving",
+        7: "Sun-Rajseva"
+      };
+
+      String? dayPlanet = dayToPlanet[day];
       final tz.TZDateTime now2 = tz.TZDateTime.now(tz.local);
       if(rahukaalstartEarlyNotify.isAfter(now2)) {
         scheduleDailyTenAMNotification(98, "Rahu Kaal will start in an Hour.",
@@ -373,7 +384,7 @@ class moon_rashi_calc
             print(
                 "NotifystartTime:  $NotifystartTime -- NotifyHora:  $NotifyHora");
           //  final tz.TZDateTime now2 = tz.TZDateTime.now(tz.local);
-            if(NotifystartTime.isAfter(now2)) {
+            if(NotifystartTime.isAfter(now2) && (NotifyHora == 'Moon-good for everything' || NotifyHora==dayPlanet)) {
               scheduleDailyTenAMNotification(
                   i, "New Hora Started", "$NotifyHora", NotifystartTime);
             }
@@ -450,7 +461,7 @@ class moon_rashi_calc
                 "NotifystartTime:  $NotifystartTime -- NotifyHora:  $NotifyHora");
            // final tz.TZDateTime now2 = tz.TZDateTime.now(tz.local);
             if(NotifyHora !="") {
-              if (NotifystartTime.isAfter(now2)) {
+              if (NotifystartTime.isAfter(now2) && (NotifyHora == 'Moon-good for everything' || NotifyHora==dayPlanet)) {
                 scheduleDailyTenAMNotification(
                     i, "New Hora Started", "$NotifyHora", NotifystartTime);
               }
@@ -460,7 +471,7 @@ class moon_rashi_calc
         }
 
       scheduleDailyTenAMNotification(
-          99, "Good Morning!!!", "Open AuspiWatch once to get today's Hora Notifications.",SetNextSunriseDate );
+          99, "Good Morning!!!", "Open Auspi Chandra once to get today's Hora Notifications.",SetNextSunriseDate );
       scheduleDailynewTempNotification();
     }
     notificationSet=true;
@@ -2525,22 +2536,22 @@ class moon_rashi_calc
   }
   Future <void> scheduleDailynewTempNotification() async {
 
-    await _notificationsPlugin.zonedSchedule(
-      999,
-      'In MoonCalc',
-      'Calculations Done.',
-      newTempNotification(),
-      // tz.TZDateTime.now(tz.local).add(Duration(seconds: 10)),
-      const NotificationDetails(
-        android: AndroidNotificationDetails('main_channel', 'Main Channel',
-            channelDescription: "ashwin",
-            importance: Importance.max,
-            priority: Priority.max),
-      ),
+    // await _notificationsPlugin.zonedSchedule(
+    //   999,
+    //   'In MoonCalc',
+    //   'Calculations Done.',
+    //   newTempNotification(),
+    //   // tz.TZDateTime.now(tz.local).add(Duration(seconds: 10)),
+    //   const NotificationDetails(
+    //     android: AndroidNotificationDetails('main_channel', 'Main Channel',
+    //         channelDescription: "ashwin",
+    //         importance: Importance.max,
+    //         priority: Priority.max),
+    //   ),
 
-      uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
-      androidAllowWhileIdle: true,);
+    //   uiLocalNotificationDateInterpretation:
+    //   UILocalNotificationDateInterpretation.absoluteTime,
+    //   androidAllowWhileIdle: true,);
     //matchDateTimeComponents: DateTimeComponents.time);
   }
   tz.TZDateTime newTempNotification() {

@@ -21,6 +21,9 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 
 class app_logic_controller extends GetxController{
+  var isDarkMode = false; // Changed to RxBool for reactivity
+  bool _isUserThemeSet = false;
+
 
   /*
   * GPS DATA
@@ -270,7 +273,7 @@ class app_logic_controller extends GetxController{
 
     await LocalNotificationService.configureLocalTimeZone();
     print("TimeZone${commonStorage.box.read('TimeZone')}");
-    checkGps();
+    await checkGps();
    var notify_permission= _notificationsPlugin!.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
 
@@ -472,8 +475,54 @@ if(Agni_hand>=360.0)
 
      });
 
+     await initializeTheme();
 
 
+
+  }
+
+   Future<void> initializeTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Check if user has manually set a theme
+    final storedTheme = prefs.getString('theme');
+    if (storedTheme != null) {
+      isDarkMode = storedTheme == 'dark';
+      _isUserThemeSet = true;
+    } else {
+      // Use system theme if no user preference is set
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final context = Get.context;
+        if (context != null) {
+          final brightness = MediaQuery.of(context).platformBrightness;
+
+          isDarkMode = brightness == Brightness.dark;
+        }
+      });
+      _isUserThemeSet = false;
+    }
+    update();
+  }
+
+  // Toggle theme and save user preference
+  void toggleTheme() {
+    isDarkMode = !isDarkMode;
+    _isUserThemeSet = true;
+    _saveThemePreference();
+    update();
+  }
+
+  // Save theme preference to SharedPreferences
+  Future<void> _saveThemePreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('theme', isDarkMode ? 'dark' : 'light');
+  }
+
+  // Update isDarkMode based on system theme (used by WidgetsBindingObserver)
+  void updateSystemTheme(Brightness brightness) {
+    if (!_isUserThemeSet) {
+      isDarkMode = brightness == Brightness.dark;
+      update();
+    }
   }
 Future<void> GhatikaCalFunction()
 async {
@@ -824,68 +873,69 @@ getData(Moonphase);
   //
   //   update();
   // }
-  checkGps() async {
+  Future<void> checkGps() async {
+    
+    try {
+      // Reset error message
+     
 
-    /*Location location = new Location();
-    bool ison = await location.serviceEnabled();
-    if (!ison) { //if defvice is off
-      bool isturnedon = await location.requestService();
-      if (isturnedon) {
-        print("GPS device is turned ON");
-      }else{
-        print("GPS Device is still OFF");
+      // Check if location services are enabled
+      servicestatus = await Geolocator.isLocationServiceEnabled();
+      if (!servicestatus) {
+        enableDeviceLocation = false;
+       
+        // Attempt to open location settings
+        await Geolocator.openLocationSettings();
+        update();
+        return;
       }
-    }*/
 
-    print('In checkGps');
-    servicestatus = await Geolocator.isLocationServiceEnabled();
+      // Check internet connectivity
+      if (!await CheckInternet.checkInternet()) {
+        internetConnection = false;
+       
+        update();
+        return;
+      }
+      internetConnection = true;
 
-    if(servicestatus){
-      print("GPS Service");
+      // Check location permissions
       permission = await Geolocator.checkPermission();
-
+      print('In permission is  $permission');
       if (permission == LocationPermission.denied) {
+        print('In denied');
         permission = await Geolocator.requestPermission();
+        print(
+            "permission status is ${permission == LocationPermission.denied}");
         if (permission == LocationPermission.denied) {
-
+       
           print('Location permissions are denied');
-        }else if(permission == LocationPermission.deniedForever){
-          // await Geolocator.requestPermission();
-          print("'Location permissions are permanently denied");
-        }else{
-          haspermission = true;
+          update();
+          return;
+        } else if (permission == LocationPermission.deniedForever) {
+         
+          print("Location permissions are permanently denied");
+          await Geolocator.openAppSettings();
+          update();
+          return;
         }
-      }else{
-        haspermission = true;
+      } else {
+        print('In accept');
       }
 
-      if(haspermission){
-        //  update();
-        enableDeviceLocation = true;
-        print("getLfocation call=======");
-        if(await CheckInternet.checkInternet()) {
-          updateFlag(true);
-          getLocation();
-        }else{
-          updateFlag(false);
-        }
-        //getLocation();
+      haspermission = true;
+      enableDeviceLocation = true;
+      print("GPS permission granted, fetching location...");
+      update();
 
-      }
-    }else{
-      // Geolocator.openAppSettings();
+      // Fetch location asynchronously
+      getLocation();
+    } catch (e) {
+   
+      print("Error in checkGps: $e");
       enableDeviceLocation = false;
-      var openApp = await Geolocator.openLocationSettings();
-      print("openApp  $openApp");
-
-      print("GPS Service is not enabled, turn on GPS location");
-      return Future.error('Location services are disabled.');
-      // await openAppSettings();
-      //return Future.error('Location permissions are denied');
-
+      update();
     }
-
-    update();
   }
 
   getLocation() async {

@@ -608,7 +608,7 @@ getData(Moonphase);
   }
   background_calculate ()async
   {
-    print("background_calculate if" );
+   
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     SunCalc.getSundata(0.00);
     Solar_deg=int.parse(SunData[5]);

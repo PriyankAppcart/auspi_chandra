@@ -1,0 +1,2 @@
+C:/Projects/all-three/auspi/Auspi_Chandra/android/app/.cxx/RelWithDebInfo/3u3m3d4r/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Projects/all-three/auspi/Auspi_Chandra/android/app/.cxx/RelWithDebInfo/3u3m3d4r/arm64-v8a/CMakeFiles/rebuild_cache.dir

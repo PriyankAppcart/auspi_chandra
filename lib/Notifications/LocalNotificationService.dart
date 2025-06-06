@@ -90,20 +90,20 @@ class LocalNotificationService {
   }
   static scheduleDailyTenAMNotification() async {
 
-    await _notificationsPlugin.zonedSchedule(
-        0,
-        'daily scheduled notification title',
-        'daily scheduled notification body',
-        _nextInstanceOfTenAM(),
-        const NotificationDetails(
-          android: AndroidNotificationDetails('daily notification channel id',
-              'daily notification channel name',
-              channelDescription: 'daily notification description'),
-        ),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time);
+    // await _notificationsPlugin.zonedSchedule(
+    //     0,
+    //     'daily scheduled notification title',
+    //     'daily scheduled notification body',
+    //     _nextInstanceOfTenAM(),
+    //     const NotificationDetails(
+    //       android: AndroidNotificationDetails('daily notification channel id',
+    //           'daily notification channel name',
+    //           channelDescription: 'daily notification description'),
+    //     ),
+    //     androidAllowWhileIdle: true,
+    //     uiLocalNotificationDateInterpretation:
+    //     UILocalNotificationDateInterpretation.absoluteTime,
+    //     matchDateTimeComponents: DateTimeComponents.time);
   }
   static tz.TZDateTime _nextInstanceOfTenAM() {
     print("Here in TZ");

@@ -26,11 +26,11 @@ Future<void> main() async {
   await LocalNotificationService.configureLocalTimeZone();
  // await initializeService();
  // await initializeService();
- Workmanager().initialize(
-     callbackDispatcher, // The top level function, aka callbackDispatcher
-     isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
- );
-Workmanager().registerOneOffTask("task-identifier", "simpleTask",initialDelay: Duration(seconds: 60));
+//  Workmanager().initialize(
+//      callbackDispatcher, // The top level function, aka callbackDispatcher
+//      isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+//  );
+// Workmanager().registerOneOffTask("task-identifier", "simpleTask",initialDelay: Duration(seconds: 60));
   // Workmanager().registerPeriodicTask(
   //   "simplePeriodicTask",
   //   "simplePeriodic1HourTask",
